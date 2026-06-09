@@ -64,7 +64,18 @@
     .send-btn:active { transform: scale(0.97); }
     .send-btn:disabled { opacity: 0.3; cursor: not-allowed; transform: none; }
     .send-btn svg { width: 18px; height: 18px; fill: #ffffff; }
-    @media (max-width: 640px) { .sidebar { display: none; } .messages { padding: 20px 16px; } .input-area { padding: 16px; } .chat-header { padding: 16px; } }
+    .header-btn { background: none; border: 1px solid var(--border-light); color: var(--text-muted); border-radius: 6px; padding: 6px 10px; font-family: 'DM Mono', monospace; font-size: 11px; cursor: pointer; display: flex; align-items: center; gap: 5px; transition: all 0.15s; }
+    .header-btn:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-dim); }
+    .header-btn svg { width: 13px; height: 13px; fill: currentColor; }
+    .header-actions { display: flex; gap: 8px; align-items: center; }
+    .powered { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--text-muted); display: flex; align-items: center; gap: 4px; }
+    .powered a { color: var(--text-muted); text-decoration: none; } .powered a:hover { color: var(--accent); }
+    .mobile-bar { display: none; padding: 14px 16px; border-bottom: 1px solid var(--border); align-items: center; justify-content: space-between; }
+    .mobile-identity { display: flex; align-items: center; gap: 10px; }
+    .mobile-avatar { width: 32px; height: 32px; border-radius: 50%; background: var(--accent); display: flex; align-items: center; justify-content: center; font-family: 'Syne', sans-serif; font-weight: 800; font-size: 12px; color: #fff; flex-shrink: 0; }
+    .mobile-name { font-size: 14px; font-weight: 700; }
+    .mobile-title { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--accent); }
+    @media (max-width: 640px) { .sidebar { display: none; } .mobile-bar { display: flex; } .messages { padding: 20px 16px; } .input-area { padding: 16px; } .chat-header { padding: 16px; } }
     .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.3); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; z-index: 100; padding: 24px; }
     .modal { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 36px; max-width: 480px; width: 100%; display: flex; flex-direction: column; gap: 20px; }
     .modal-eyebrow { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--text-muted); letter-spacing: 1px; text-transform: uppercase; }
@@ -98,13 +109,24 @@
   </div>
 </div>
 
+<div class="mobile-bar">
+  <div class="mobile-identity">
+    <div class="mobile-avatar">IK</div>
+    <div>
+      <div class="mobile-name">Isaiah Kim</div>
+      <div class="mobile-title">Staff Engineer</div>
+    </div>
+  </div>
+  <div class="status-dot"></div>
+</div>
+
 <div class="layout">
   <aside class="sidebar">
     <div class="avatar-block">
       <div class="avatar">IK</div>
       <div>
         <div class="name">Isaiah Kim</div>
-        <div class="title-tag">Staff Engineer</div>
+        <div class="title-tag">Targeting product-focused Staff Engineer roles</div>
       </div>
     </div>
     <div class="sidebar-section">
@@ -140,12 +162,25 @@
         </a>
       </div>
     </div>
-    <div class="sidebar-bottom">AI-powered · Answers based on<br/>Isaiah's resume & experience</div>
+    <div class="sidebar-bottom">
+      <div class="powered">Powered by <a href="https://anthropic.com" target="_blank">Claude</a></div>
+      <div style="margin-top:6px;">Answers based on Isaiah's resume & experience</div>
+    </div>
   </aside>
   <div class="chat-area">
     <div class="chat-header">
       <span class="chat-header-title">ASK ABOUT ISAIAH</span>
-      <div class="status-dot"></div>
+      <div class="header-actions">
+        <button class="header-btn" onclick="copyLink()" id="copyBtn">
+          <svg viewBox="0 0 24 24"><path d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m13.35-.622l1.757-1.757a4.5 4.5 0 00-6.364-6.364l-4.5 4.5a4.5 4.5 0 001.242 7.244"/></svg>
+          Share
+        </button>
+        <button class="header-btn" onclick="resetChat()">
+          <svg viewBox="0 0 24 24"><path d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99"/></svg>
+          Reset
+        </button>
+        <div class="status-dot"></div>
+      </div>
     </div>
     <div class="messages" id="messages">
       <div class="msg bot">
@@ -168,9 +203,23 @@
     document.getElementById('modal').style.display = 'none';
   }
 
+  function resetChat() {
+    conversationHistory = [];
+    const msgs = document.getElementById('messages');
+    msgs.innerHTML = `<div class="msg bot"><div class="msg-label">Isaiah's AI</div><div class="msg-bubble">Hey — I'm Isaiah's AI assistant. Ask me anything about his background, the kind of work he does, or why he'd be a fit for a staff-level role. What do you want to know?</div></div>`;
+  }
+
+  function copyLink() {
+    navigator.clipboard.writeText(window.location.href).then(() => {
+      const btn = document.getElementById('copyBtn');
+      btn.textContent = 'Copied!';
+      setTimeout(() => { btn.innerHTML = '<svg viewBox="0 0 24 24"><path d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m13.35-.622l1.757-1.757a4.5 4.5 0 00-6.364-6.364l-4.5 4.5a4.5 4.5 0 001.242 7.244"/></svg> Share'; }, 2000);
+    });
+  }
+
   let conversationHistory = [];
 
-  const SYSTEM_PROMPT = `You are an AI assistant representing Isaiah Kim, a Staff Frontend Engineer based in New York. You answer questions from recruiters and hiring managers on his behalf. Be confident, specific, and concise. Never make things up — only reference the information below. Speak in third person about Isaiah.
+  const _REMOVED = `
 
 ---
 
@@ -407,7 +456,7 @@ TONE: Confident, direct, no fluff. Isaiah is someone who moves fast, thinks at a
       const response = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ messages: conversationHistory, system: SYSTEM_PROMPT })
+        body: JSON.stringify({ messages: conversationHistory })
       });
       const data = await response.json();
       removeTyping();
